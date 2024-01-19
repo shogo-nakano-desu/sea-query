@@ -2034,7 +2034,7 @@ impl SelectStatement {
     ///     .column(Char::Character)
     ///     .from(Char::Table)
     ///     .and_where(Expr::col(Char::FontId).eq(5))
-    ///     .lock_with_behavior(LockType::Update, LockBehavior::Nowait)
+    ///     .lock_with_behavior(LockType::Update, Some(LockBehavior::Nowait))
     ///     .to_owned();
     ///
     /// assert_eq!(
@@ -2050,11 +2050,15 @@ impl SelectStatement {
     ///     r#"SELECT "character" FROM "character" WHERE "font_id" = 5 "#
     /// );
     /// ```
-    pub fn lock_with_behavior(&mut self, r#type: LockType, behavior: LockBehavior) -> &mut Self {
+    pub fn lock_with_behavior(
+        &mut self,
+        r#type: LockType,
+        behavior: Option<LockBehavior>,
+    ) -> &mut Self {
         self.lock = Some(LockClause {
             r#type,
             tables: Vec::new(),
-            behavior: Some(behavior),
+            behavior,
         });
         self
     }
